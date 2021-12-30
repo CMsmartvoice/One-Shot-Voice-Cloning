@@ -11,7 +11,7 @@
 
 :star: 依赖Unet网络和AdaIN层，我们的方法在未见风格上有很强的迁移能力。
 
-[推理代码](notebook) or colab
+[推理代码](notebook) or [在线notebook](https://colab.research.google.com/drive/1sEDvKTJCY7uosb7TvTqwyUdwNPiv3pBW#scrollTo=puzhCI99LY_a)
 
 [Demo results](https://cmsmartvoice.github.io/Unet-TTS/)
 

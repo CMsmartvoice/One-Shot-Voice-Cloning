@@ -11,7 +11,7 @@
 
 :star: With the help of Unet network and AdaIN layer, our proposed algorithm has powerful speaker and style transfer capabilities.
 
-[Infer code](notebook) or colab
+[Infer code](notebook) or [Colab notebook](https://colab.research.google.com/drive/1sEDvKTJCY7uosb7TvTqwyUdwNPiv3pBW#scrollTo=puzhCI99LY_a)
 
 [Demo results](https://cmsmartvoice.github.io/Unet-TTS/)
 
