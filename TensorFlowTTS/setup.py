@@ -23,7 +23,8 @@ if LooseVersion(pip.__version__) < LooseVersion("19"):
 requirements = {
     "install": [
         "tensorflow-gpu==2.6.0",
-        "tensorflow-addons==0.10.0",
+        "tensorflow-addons==0.14.0",
+        "keras==2.6.0",
         "setuptools>=38.5.1",
         "librosa>=0.7.0",
         "soundfile>=0.10.2",
