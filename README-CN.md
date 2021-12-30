@@ -7,7 +7,7 @@
 
 :star: 模型只在正常情绪的语料上训练，没有使用其他任何强烈情感的语料。
 
-:star: 收到训练语料的限制，一般的说话人编码或者非监督风格学习方法都很难模仿未见过的语音。训练数据分布范围外的风格迁移仍具有很大的挑战。
+:star: 受到训练语料的限制，一般的说话人编码或者非监督风格学习方法都很难模仿未见过的语音。训练数据分布范围外的风格迁移仍具有很大的挑战。
 
 :star: 依赖Unet网络和AdaIN层，我们的方法在未见风格上有很强的迁移能力。
 
@@ -21,17 +21,18 @@
 
 ---
 :smile: 我们正在准备基于aishell3数据的训练流程，敬请期待。
-It contains:
-- [ ] MFA-based duration alignment
-- [ ] Multi-speaker TTS with speaker_embedding-Instance-Normalization, and this model provides pre-training Content Encoder.
-- [ ] Unet-TTS training
-- [x] One-shot Voice cloning inference
-- [ ] C++ inference
+
+流程包括:
+- [ ] 基于MFA工具的，音素时长对齐
+- [ ] 基于说话人编码的多说话人TTS，它可以提供不错的Content Encoder
+- [ ] Unet-TTS训练
+- [x] 一句话语音克隆推理
+- [ ] C++推理
 
 ---
 ### Install Requirements
 - Install the appropriate TensorFlow and tensorflow-addons versions according to CUDA version. 
-- The default is TensorFlow 2.6 and tensorflow-addons 0.10.0.
+- The default is TensorFlow 2.6 and tensorflow-addons 0.14.0.
 ```shell
 pip install TensorFlowTTS
 ```

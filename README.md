@@ -33,7 +33,7 @@ It contains:
 ---
 ### Install Requirements
 - Install the appropriate TensorFlow and tensorflow-addons versions according to CUDA version. 
-- The default is TensorFlow 2.6 and tensorflow-addons 0.10.0.
+- The default is TensorFlow 2.6 and tensorflow-addons 0.14.0.
 ```shell
 pip install TensorFlowTTS
 ```
