@@ -1,0 +1,113 @@
+###########################################################
+#                FEATURE EXTRACTION SETTING               #
+###########################################################
+hop_size: 200            # Hop size.
+format: "npy"
+
+
+###########################################################
+#              NETWORK ARCHITECTURE SETTING               #
+###########################################################
+model_type: "unetts_acous"
+
+unetts_acous_params:
+    dataset: multispk_voiceclone
+
+    # content encoder
+    encoder_hidden_size: 128
+    encoder_num_hidden_layers: 2
+    encoder_num_attention_heads: 2
+    encoder_attention_head_size: 64
+
+    encoder_intermediate_size: 512
+    encoder_intermediate_kernel_size: 3
+    encoder_hidden_act: "mish"
+
+    addfeatures_num: 3
+    isaddur: True
+
+    # AdaIN encoder and decoder
+    content_latent_dim: 132  # content_latent_dim = proj(encoder_output) + (3 + (1 if isaddur else 0) if addfeatures_num else 0)
+    n_conv_blocks: 6
+    adain_filter_size: 256
+    enc_kernel_size: 5
+    dec_kernel_size: 5
+    gen_kernel_size: 5
+
+    num_mels: 80
+    hidden_dropout_prob: 0.2
+    attention_probs_dropout_prob: 0.1
+
+    initializer_range: 0.02
+    output_attentions: False
+    output_hidden_states: False
+
+unetts_acous_context_pre_params:
+    dataset: multispk_voiceclone
+
+    encoder_hidden_size: 128
+    encoder_num_hidden_layers: 2
+    encoder_num_attention_heads: 2
+    encoder_attention_head_size: 64
+
+    encoder_intermediate_size: 512
+    encoder_intermediate_kernel_size: 3
+    encoder_hidden_act: "mish"
+
+    addfeatures_num: 3
+    isaddur: True
+
+    content_latent_dim: 132  # content_latent_dim = proj(encoder_output) + (3 + (1 if isaddur else 0) if addfeatures_num else 0)
+
+    decoder_is_conditional: True
+    decoder_conditional_norm_type: "Instance"      # "Layer" or "Instance"
+
+    decoder_hidden_size: 132
+    decoder_num_hidden_layers: 3
+    decoder_num_attention_heads: 2
+    decoder_attention_head_size: 66
+
+    decoder_intermediate_size: 512
+    decoder_intermediate_kernel_size: 9
+    decoder_hidden_act: "mish"
+
+    num_mels: 80
+    hidden_dropout_prob: 0.2
+    attention_probs_dropout_prob: 0.1
+
+    initializer_range: 0.02
+    output_attentions: False
+    output_hidden_states: False
+
+###########################################################
+#                  DATA LOADER SETTING                    #
+###########################################################
+batch_size: 48              # Batch size.
+# remove_short_samples: true  # Whether to remove samples the length of which are less than batch_max_steps.
+allow_cache: true           # Whether to allow cache in dataset. If true, it requires cpu memory.
+# mel_length_threshold: 32    # remove all targets has mel_length <= 32 
+is_shuffle: true            # shuffle dataset after each epoch.
+###########################################################
+#             OPTIMIZER & SCHEDULER SETTING               #
+###########################################################
+optimizer_params:
+    initial_learning_rate: 0.001
+    end_learning_rate: 0.00001
+    decay_steps: 150000          # < train_max_steps is recommend.
+    warmup_proportion: 0.02
+    weight_decay: 0.001
+    
+    
+###########################################################
+#                    INTERVAL SETTING                     #
+###########################################################
+train_max_steps: 200000               # Number of training steps.
+save_interval_steps: 10000             # Interval steps to save checkpoint.
+eval_interval_steps: 2000              # Interval steps to evaluate the network.
+log_interval_steps: 250               # Interval steps to record the training log.
+###########################################################
+#                     OTHER SETTING                       #
+###########################################################
+num_save_intermediate_results: 1  # Number of batch to be saved as intermediate results.
+results_num: 10
+wav_output_epochs: 20

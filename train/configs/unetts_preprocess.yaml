@@ -1,0 +1,25 @@
+###########################################################
+#                FEATURE EXTRACTION SETTING               #
+###########################################################
+feat_params:
+  sample_rate: 16000
+  n_fft: 800
+  num_mels: 80
+  hop_size: 200
+  win_size: 800
+  fmin: 55
+  fmax: 7600
+  min_level_db: -100
+  ref_level_db: 20
+  max_abs_value: 4.0
+  preemphasis: 0.97
+  preemphasize: True
+  signal_normalization: True
+  allow_clipping_in_normalization: True
+  symmetric_mels: True
+  power: 1.5
+  griffin_lim_iters: 60
+  rescale: True
+  rescaling_max: 0.9
+
+format: "npy"            # Feature file format. Only "npy" is supported.
