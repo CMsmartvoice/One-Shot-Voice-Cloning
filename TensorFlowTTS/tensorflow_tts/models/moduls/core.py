@@ -580,16 +580,19 @@ class TFFastSpeechLengthRegulator(tf.keras.layers.Layer):
         x1 = np.linspace(-1.5, 1.5, npoints)
         x2 = np.linspace(-1.0, 2.0, npoints)
         x3 = np.linspace(-0.5, 2.5, npoints)
+        x4 = np.linspace(0.0, 3.0, npoints)
 
         mu1 = 0.0
         mu2 = 0.5
         mu3 = 1.0
+        mu4 = 1.5
 
         sigma = 0.4
 
         self.cc_features0 = tf.convert_to_tensor(scipy.stats.norm.pdf(x1, mu1, sigma), tf.float32)
         self.cc_features1 = tf.convert_to_tensor(scipy.stats.norm.pdf(x2, mu2, sigma), tf.float32)
         self.cc_features2 = tf.convert_to_tensor(scipy.stats.norm.pdf(x3, mu3, sigma), tf.float32)
+        self.cc_features3 = tf.convert_to_tensor(scipy.stats.norm.pdf(x4, mu4, sigma), tf.float32)
 
     def call(self, inputs, training=False):
         """Call logic.
@@ -613,6 +616,7 @@ class TFFastSpeechLengthRegulator(tf.keras.layers.Layer):
         hidden_size = input_shape[-1]
 
         # initialize output hidden states and encoder masking.
+        # TODO add tflite_infer for coarse_coding
         if self.enable_tflite_convertible:
             # There is only 1 batch in inference, so we don't have to use
             # `tf.While` op with 3-D output tensor.
@@ -693,11 +697,12 @@ class TFFastSpeechLengthRegulator(tf.keras.layers.Layer):
                     durindex = (durindex - 1) / durdur
 
                     # coarse_coding
-                    indexs = tf.cast(durindex*200, tf.int32)
-                    cc0 = tf.gather(self.cc_features0, 300+indexs)
-                    cc1 = tf.gather(self.cc_features1, 200+indexs)
-                    cc2 = tf.gather(self.cc_features2, 100+indexs)
-                    ccc = tf.concat([cc0, cc1, cc2], axis=-1)
+                    indexs = tf.cast(durindex*100, tf.int32)
+                    cc0 = tf.gather(self.cc_features0, 400+indexs)
+                    cc1 = tf.gather(self.cc_features1, 300+indexs)
+                    cc2 = tf.gather(self.cc_features2, 200+indexs)
+                    cc3 = tf.gather(self.cc_features3, 100+indexs)
+                    ccc = tf.concat([cc0, cc1, cc2, cc3], axis=-1)
 
                     if self.config.isaddur:
                         repeat_encoder_hidden_states = tf.concat([repeat_encoder_hidden_states, durdur], -1)

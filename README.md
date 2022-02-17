@@ -20,12 +20,16 @@
 ![](./pics/structure.png)
 
 ---
+:star: Now, you only need to use the reference speech for one-shot voice cloning and no longer need to manually enter the duration statistics additionally.
+
 :smile: The authors are preparing simple, clear, and well-documented training process of Unet-TTS based on Aishell3.
+
 It contains:
-- [ ] MFA-based duration alignment
+
+- [x] One-shot Voice cloning inference
+- [x] The duration statistics of the reference speech can be estimated Automatically using Style_Encoder.
 - [ ] Multi-speaker TTS with speaker_embedding-Instance-Normalization, and this model provides pre-training Content Encoder.
 - [ ] Unet-TTS training
-- [x] One-shot Voice cloning inference
 - [ ] C++ inference
 
  Stay tuned!
@@ -60,9 +64,12 @@ text2id_mapper = "models/unetts_mapper.json"
 
 Tts_handel = UnetTTS(models_and_params, text2id_mapper, feats_yaml)
 
-#text: input text
-#src_audio: reference audio
-#dur_stat: phoneme duration statistis to contraol speed rate
+# text: input text
+# src_audio: reference audio
+# The duration statistics of the reference speech can be estimated Automatically using Style_Encoder
+syn_audio, _, _ = Tts_handel.one_shot_TTS(text, src_audio)
+
+# OR input dur_stat to control speed rate
 syn_audio, _, _ = Tts_handel.one_shot_TTS(text, src_audio, dur_stat)
 ```
 

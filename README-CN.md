@@ -20,13 +20,15 @@
 ![](./pics/structure.png)
 
 ---
+:star: 现在只需要输入一条参考语音就可以进行克隆TTS，而不再需要手动输入参考语音的时长统计信息。
+
 :smile: 我们正在准备基于aishell3数据的训练流程，敬请期待。
 
 流程包括:
-- [ ] 基于MFA工具的，音素时长对齐
+- [x] 一句话语音克隆推理
+- [x] 参考音频的时长统计信息可以有训练的Style_Encoder估计
 - [ ] 基于说话人编码的多说话人TTS，它可以提供不错的Content Encoder
 - [ ] Unet-TTS训练
-- [x] 一句话语音克隆推理
 - [ ] C++推理
 
 ---
@@ -59,9 +61,13 @@ text2id_mapper = "models/unetts_mapper.json"
 
 Tts_handel = UnetTTS(models_and_params, text2id_mapper, feats_yaml)
 
-#text: input text
-#src_audio: reference audio
-#dur_stat: phoneme duration statistis to contraol speed rate
+# text: input text
+# src_audio: reference audio
+# The duration statistics of the reference speech can be estimated using Style_Encoder
+syn_audio, _, _ = Tts_handel.one_shot_TTS(text, src_audio)
+
+# OR
+# dur_stat: phoneme duration statistis to control speed rate
 syn_audio, _, _ = Tts_handel.one_shot_TTS(text, src_audio, dur_stat)
 ```
 

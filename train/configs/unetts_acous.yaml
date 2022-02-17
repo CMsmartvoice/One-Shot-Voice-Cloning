@@ -23,8 +23,8 @@ unetts_acous_params:
     encoder_intermediate_kernel_size: 3
     encoder_hidden_act: "mish"
 
-    addfeatures_num: 3
-    isaddur: True
+    addfeatures_num: 4
+    isaddur: False
 
     # AdaIN encoder and decoder
     content_latent_dim: 132  # content_latent_dim = proj(encoder_output) + (3 + (1 if isaddur else 0) if addfeatures_num else 0)
@@ -54,8 +54,8 @@ unetts_acous_context_pre_params:
     encoder_intermediate_kernel_size: 3
     encoder_hidden_act: "mish"
 
-    addfeatures_num: 3
-    isaddur: True
+    addfeatures_num: 4
+    isaddur: False
 
     content_latent_dim: 132  # content_latent_dim = proj(encoder_output) + (3 + (1 if isaddur else 0) if addfeatures_num else 0)
 
@@ -82,7 +82,7 @@ unetts_acous_context_pre_params:
 ###########################################################
 #                  DATA LOADER SETTING                    #
 ###########################################################
-batch_size: 48              # Batch size.
+batch_size: 32              # Batch size.
 # remove_short_samples: true  # Whether to remove samples the length of which are less than batch_max_steps.
 allow_cache: true           # Whether to allow cache in dataset. If true, it requires cpu memory.
 # mel_length_threshold: 32    # remove all targets has mel_length <= 32 

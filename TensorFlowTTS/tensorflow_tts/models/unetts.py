@@ -200,8 +200,8 @@ class TFUNETTSAcous(tf.keras.Model):
         # fake inputs
         char_ids     = tf.convert_to_tensor([[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]], tf.int32)
         duration_gts = tf.convert_to_tensor([[3, 3, 3, 3, 3, 3, 3, 3, 3, 3]], tf.int32)
-        mel_gts      = tf.random.normal([1, 30, self.config.num_mels], dtype=tf.float32)
-        self(char_ids, duration_gts, mel_gts)
+        mel_src      = tf.random.normal([1, 30, self.config.num_mels], dtype=tf.float32)
+        self(char_ids, duration_gts, mel_src)
 
     def text_encoder_weight_load(self, content_encoder_path):
         self.content_encoder.load_weights(content_encoder_path)
@@ -210,13 +210,13 @@ class TFUNETTSAcous(tf.keras.Model):
         self.content_encoder.trainable = False
 
     def call(
-        self, char_ids, duration_gts, mel_gts, training=False, **kwargs,
+        self, char_ids, duration_gts, mel_src, training=False, **kwargs,
     ):
         """Call logic."""
         content_latents, encoder_masks = self.content_encoder(char_ids, duration_gts, training=False)
         content_latents = content_latents * tf.cast(tf.expand_dims(encoder_masks, axis=2), content_latents.dtype)
 
-        content_latent_pred, means, stds = self.src_mel_encoder(mel_gts, encoder_masks)
+        content_latent_pred, means, stds = self.src_mel_encoder(mel_src, encoder_masks)
         content_latent_pred = content_latent_pred * tf.cast(tf.expand_dims(encoder_masks, axis=2), content_latent_pred.dtype)
 
         mel_before = self.tar_mel_decoder(content_latents, (content_latent_pred, means, stds), encoder_masks)
@@ -224,16 +224,21 @@ class TFUNETTSAcous(tf.keras.Model):
 
         return (mel_before, content_latents, content_latent_pred)
 
-    def _inference(self, char_ids, duration_gts, mel_gts, **kwargs):
+    def _inference(self, char_ids, duration_gts, mel_src, **kwargs):
         """Call logic."""
         content_latents, encoder_masks = self.content_encoder(char_ids, duration_gts, training=False)
 
-        tmp_masks = tf.ones([tf.shape(mel_gts)[0], tf.shape(mel_gts)[1]], dtype=tf.bool)
-        _, means, stds = self.src_mel_encoder(mel_gts, tmp_masks)
+        tmp_masks = tf.ones([tf.shape(mel_src)[0], tf.shape(mel_src)[1]], dtype=tf.bool)
+        _, means, stds = self.src_mel_encoder(mel_src, tmp_masks)
 
         mel_before = self.tar_mel_decoder(content_latents, (_, means, stds), encoder_masks)
 
         return mel_before, means, stds
+
+    def extract_dur_pos_embed(self, mel_src):
+        tmp_masks = tf.ones([tf.shape(mel_src)[0], tf.shape(mel_src)[1]], dtype=tf.bool)
+        content_latent_pred, _, _ = self.src_mel_encoder(mel_src, tmp_masks)
+        return content_latent_pred[:, :, -4:]
 
     def setup_inference_fn(self):
         self.inference = tf.function(
@@ -242,7 +247,7 @@ class TFUNETTSAcous(tf.keras.Model):
             input_signature=[
                 tf.TensorSpec(shape=[None, None], dtype=tf.int32, name="char_ids"),
                 tf.TensorSpec(shape=[None, None], dtype=tf.int32, name="duration_gts"),
-                tf.TensorSpec(shape=[None, None, None], dtype=tf.float32, name="mel_gts"),
+                tf.TensorSpec(shape=[None, None, None], dtype=tf.float32, name="mel_src"),
             ],
         )
 
@@ -252,7 +257,7 @@ class TFUNETTSAcous(tf.keras.Model):
             input_signature=[
                 tf.TensorSpec(shape=[1, None], dtype=tf.int32, name="char_ids"),
                 tf.TensorSpec(shape=[1, None], dtype=tf.int32, name="duration_gts"),
-                tf.TensorSpec(shape=[1, None, None], dtype=tf.float32, name="mel_gts"),
+                tf.TensorSpec(shape=[1, None, None], dtype=tf.float32, name="mel_src"),
             ],
         )
 
