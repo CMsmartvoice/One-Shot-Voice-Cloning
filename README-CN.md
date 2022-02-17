@@ -36,18 +36,17 @@
 - Install the appropriate TensorFlow and tensorflow-addons versions according to CUDA version. 
 - The default is TensorFlow 2.6 and tensorflow-addons 0.14.0.
 ```shell
+cd One-Shot-Voice-Cloning
 pip install TensorFlowTTS
 ```
 
 ### Usage
-- see file UnetTTS_syn.py or notebook
-```shell
-CUDA_VISIBLE_DEVICES=0 python UnetTTS_syn.py
-```
 
 ```python
+from tensorflow_tts.audio_process import preprocess_wav
 from UnetTTS_syn import UnetTTS
 
+"""初始化模型"""
 models_and_params = {"duration_param": "train/configs/unetts_duration.yaml",
                     "duration_model": "models/duration4k.h5",
                     "acous_param": "train/configs/unetts_acous.yaml",
@@ -61,17 +60,27 @@ text2id_mapper = "models/unetts_mapper.json"
 
 Tts_handel = UnetTTS(models_and_params, text2id_mapper, feats_yaml)
 
-# text: input text
-# src_audio: reference audio
-# The duration statistics of the reference speech can be estimated using Style_Encoder
-syn_audio, _, _ = Tts_handel.one_shot_TTS(text, src_audio)
 
-# OR
-# dur_stat: phoneme duration statistis to control speed rate
-syn_audio, _, _ = Tts_handel.one_shot_TTS(text, src_audio, dur_stat)
+"""根据目标语音，生成任意文本的克隆语音""" 
+wav_fpath = "./reference_speech.wav"
+ref_audio = preprocess_wav(wav_fpath, source_sr=16000, normalize=True, trim_silence=True, is_sil_pad=True,
+                    vad_window_length=30,
+                    vad_moving_average_width=1,
+                    vad_max_silence_length=1)
+
+# 文本中插入#3标识，可以当作标点符号，合成语音中会产生停顿
+text = "一句话#3风格迁移#3语音合成系统"
+
+syn_audio, _, _ = Tts_handel.one_shot_TTS(text, ref_audio)
+```
+
+
+##### 更多用法参考文件 UnetTTS_syn.py 或者 ./notebook
+```shell
+CUDA_VISIBLE_DEVICES=0 python UnetTTS_syn.py
 ```
 
 ### Reference
 https://github.com/TensorSpeech/TensorFlowTTS
 
-https://github.com/CorentinJ/Real-Time-Voice-Cloning 
+https://github.com/CorentinJ/Real-Time-Voice-Cloning

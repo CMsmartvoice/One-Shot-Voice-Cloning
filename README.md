@@ -39,18 +39,17 @@ It contains:
 - Install the appropriate TensorFlow and tensorflow-addons versions according to CUDA version. 
 - The default is TensorFlow 2.6 and tensorflow-addons 0.14.0.
 ```shell
+cd One-Shot-Voice-Cloning
 pip install TensorFlowTTS
 ```
 
 ### Usage
-- see file UnetTTS_syn.py or notebook
-```shell
-CUDA_VISIBLE_DEVICES=0 python UnetTTS_syn.py
-```
 
 ```python
+from tensorflow_tts.audio_process import preprocess_wav
 from UnetTTS_syn import UnetTTS
 
+"""Inint models"""
 models_and_params = {"duration_param": "train/configs/unetts_duration.yaml",
                     "duration_model": "models/duration4k.h5",
                     "acous_param": "train/configs/unetts_acous.yaml",
@@ -64,13 +63,24 @@ text2id_mapper = "models/unetts_mapper.json"
 
 Tts_handel = UnetTTS(models_and_params, text2id_mapper, feats_yaml)
 
-# text: input text
-# src_audio: reference audio
-# The duration statistics of the reference speech can be estimated Automatically using Style_Encoder
-syn_audio, _, _ = Tts_handel.one_shot_TTS(text, src_audio)
 
-# OR input dur_stat to control speed rate
-syn_audio, _, _ = Tts_handel.one_shot_TTS(text, src_audio, dur_stat)
+"""Synthesize arbitrary text cloning voice using a reference speech""" 
+wav_fpath = "./reference_speech.wav"
+ref_audio = preprocess_wav(wav_fpath, source_sr=16000, normalize=True, trim_silence=True, is_sil_pad=True,
+                    vad_window_length=30,
+                    vad_moving_average_width=1,
+                    vad_max_silence_length=1)
+
+# Inserting #3 marks into text is regarded as punctuation, and synthetic speech can produce pause.
+text = "一句话#3风格迁移#3语音合成系统"
+
+syn_audio, _, _ = Tts_handel.one_shot_TTS(text, ref_audio)
+```
+
+
+##### More samples see file UnetTTS_syn.py or ./notebook
+```shell
+CUDA_VISIBLE_DEVICES=0 python UnetTTS_syn.py
 ```
 
 ### Reference
