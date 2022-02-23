@@ -36,15 +36,27 @@
 - Install the appropriate TensorFlow and tensorflow-addons versions according to CUDA version. 
 - The default is TensorFlow 2.6 and tensorflow-addons 0.14.0.
 ```shell
-cd One-Shot-Voice-Cloning
-pip install TensorFlowTTS
+cd One-Shot-Voice-Cloning/TensorFlowTTS
+pip install . 
+(or python setup.py install)
 ```
 
 ### Usage
+方法1: 在UnetTTS_syn.py文件中修改要克隆的参考语音. (更多细节参见此文件)
+```shell
+cd One-Shot-Voice-Cloning
+CUDA_VISIBLE_DEVICES=0 python UnetTTS_syn.py
+```
 
+方法2: Notebook
+
+**Note**: 请将One-Shot-Voice-Cloning目录添加到系统路径中，否则UnetTTS类无法从UnetTTS_syn.py文件中载入.
 ```python
-from tensorflow_tts.audio_process import preprocess_wav
+import sys
+sys.path.append("<your repository's parent directory>/One-Shot-Voice-Cloning")
 from UnetTTS_syn import UnetTTS
+
+from tensorflow_tts.audio_process import preprocess_wav
 
 """初始化模型"""
 models_and_params = {"duration_param": "train/configs/unetts_duration.yaml",
@@ -60,7 +72,6 @@ text2id_mapper = "models/unetts_mapper.json"
 
 Tts_handel = UnetTTS(models_and_params, text2id_mapper, feats_yaml)
 
-
 """根据目标语音，生成任意文本的克隆语音""" 
 wav_fpath = "./reference_speech.wav"
 ref_audio = preprocess_wav(wav_fpath, source_sr=16000, normalize=True, trim_silence=True, is_sil_pad=True,
@@ -72,12 +83,6 @@ ref_audio = preprocess_wav(wav_fpath, source_sr=16000, normalize=True, trim_sile
 text = "一句话#3风格迁移#3语音合成系统"
 
 syn_audio, _, _ = Tts_handel.one_shot_TTS(text, ref_audio)
-```
-
-
-##### 更多用法参考文件 UnetTTS_syn.py 或者 ./notebook
-```shell
-CUDA_VISIBLE_DEVICES=0 python UnetTTS_syn.py
 ```
 
 ### Reference
