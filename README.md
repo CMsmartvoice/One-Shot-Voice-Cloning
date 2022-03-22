@@ -11,11 +11,11 @@
 
 :star: With the help of Unet network and AdaIN layer, our proposed algorithm has powerful speaker and style transfer capabilities.
 
-[Infer code](notebook) or [Colab notebook](https://colab.research.google.com/drive/1sEDvKTJCY7uosb7TvTqwyUdwNPiv3pBW?usp=sharing)
-
 [Demo results](https://cmsmartvoice.github.io/Unet-TTS/)
 
 [Paper link](https://arxiv.org/abs/2109.11115)
+
+:sparkles:[Colab notebook](https://colab.research.google.com/drive/1sEDvKTJCY7uosb7TvTqwyUdwNPiv3pBW?usp=sharing) is Highly Recommended for test.
 
 ![](./pics/structure.png)
 
@@ -36,6 +36,7 @@ It contains:
 
 ---
 ### Install Requirements
+- Only support Linux system
 - Install the appropriate TensorFlow and tensorflow-addons versions according to CUDA version. 
 - The default is TensorFlow 2.6 and tensorflow-addons 0.14.0.
 ```shell
